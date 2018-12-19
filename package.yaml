@@ -1,0 +1,51 @@
+name:                qb
+version:             0.1.0.0
+github:              "ishiy1993/qb"
+license:             BSD3
+author:              "ishiy"
+maintainer:          "y.ishihara.1993@gmail.com"
+copyright:           "2018 ishiy"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/ishiy1993/qb#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+
+ghc-options:
+- -O2
+- -Wall
+
+library:
+  source-dirs: src
+
+executables:
+  qb:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -rtsopts
+    dependencies:
+    - qb
+
+tests:
+  spec:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - hspec
+    - qb
