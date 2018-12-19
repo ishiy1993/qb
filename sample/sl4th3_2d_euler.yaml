@@ -1,0 +1,6 @@
+scheme: sl4th3
+axes: ["x", "y"]
+bases: [r, u, v, p]
+elem-type: double
+eom-rank: 2
+with-filter: false
