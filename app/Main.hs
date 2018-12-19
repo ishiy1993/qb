@@ -3,14 +3,15 @@ module Main where
 import QB
 import QB.Seed
 
+import System.Environment (getArgs)
+import System.Exit (die)
+
 main :: IO ()
 main = do
-  let fn = "tmp.fmr"
-  let seed = Seed { scheme = "sl4th3"
-                  , axes = ["x","y"]
-                  , bases = ["r","u","v","p"]
-                  , elemType = "double"
-                  , eomRank = 2
-                  , withFilter = False
-                  }
-  writeCode fn . generateCode $ seed
+  args <- getArgs
+  case args of
+    [fn] -> do
+      let output = "tmp.fmr"
+      seed <- getSeed fn
+      writeCode output . generateCode $ seed
+    _ -> die "Need a yaml file"
