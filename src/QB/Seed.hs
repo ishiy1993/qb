@@ -13,6 +13,8 @@ data Seed = Seed
   , elemType :: FmrType
   , eomRank :: Int -- 時間1階微分を計算するのに必要な空間微分の階数の最大値
   , withFilter :: Bool
+  , params :: Maybe String
+  , initialCondition :: Maybe String
   } deriving (Show,Eq)
 
 instance FromJSON Seed where
@@ -23,6 +25,8 @@ instance FromJSON Seed where
          <*> v .: "elem-type"
          <*> v .: "eom-rank"
          <*> v .: "with-filter"
+         <*> v .:? "params"
+         <*> v .:? "initial-condition"
   parseJSON _ = fail "Expected Object for Seed value"
 
 getSeed :: FilePath -> IO Seed

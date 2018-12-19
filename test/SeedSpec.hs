@@ -14,6 +14,8 @@ spec = do
                     , elemType = "double"
                     , eomRank = 2
                     , withFilter = False
+                    , params = Nothing
+                    , initialCondition = Nothing
                     }
         -- x だけだと bool値 として解釈される
         yaml = "scheme: sl4th3\naxes: ['x','y']\nbases: [r, u, v, p]\nelem-type: double\neom-rank: 2\nwith-filter: false\n"

@@ -2,7 +2,7 @@
 module QB.Scheme.SL4TH3 (withSL4TH3) where
 
 import Data.List (intercalate, nub, sort, group, findIndex)
-import Data.Maybe (fromJust)
+import Data.Maybe (fromJust, fromMaybe)
 import Text.Printf
 
 import QB.Types
@@ -73,7 +73,7 @@ withSL4TH3 s = CodeStructure { target = S.scheme s
             , "q_t" @= map (++"_t") qs
             , "q_tt" @= map (++"_tt") qs
             ]
-    ds = ["#PARAM", "", "#INIT", "", diffs, smooth, updateF, delF]
+    ds = ["#PARAM", fromMaybe "" (S.params s), "#INIT", fromMaybe "" (S.initialCondition s), diffs, smooth, updateF, delF]
     ib = [q ++ "c" ++ bckt ["i" ++ show i | i <- [1..dim]] <=> "initialize_" ++ q ++ paren ["i" ++ show i ++ "*d" ++ a | (i,a) <- zip [1..dim] as] | q <- qs]
     fsb = [ "q" @= qc
           , "(q_t,q_tt) = del(q)"

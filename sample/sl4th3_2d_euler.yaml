@@ -4,3 +4,27 @@ bases: [r, u, v, p]
 elem-type: double
 eom-rank: 2
 with-filter: false
+params: |
+  extern function :: sin
+  extern function :: exp
+  extern function :: atan
+  extern function :: fabs
+
+  double :: pi = 4*atan(1)
+  double :: dt = dx*dx
+
+  double :: lx = total_grid_x*dx
+  double :: ly = total_grid_y*dy
+  double :: gm = 5/3
+  double :: w = 0.025
+initial-condition: |
+  f = fun(l,h,y) if y < ly/4 then l - (l-h)/2 * exp((y-ly/4)/w) else \
+               if y < ly/2 then h + (l-h)/2 * exp((ly/4 - y)/w) else \
+               if y < 3*ly/4 then h + (l-h)/2 * exp((y - 3*ly/4)/w) \
+                             else l - (l-h)/2 * exp((3*ly/4 - y)/w)
+  initialize_r = fun(x,y) f(1,2,y)
+  initialize_u = fun(x,y) f(0.5,(-0.5),y)
+  initialize_v = fun(x,y) 0.01*sin(4*pi*x)
+  initialize_p = fun(x,y) 2.5
+
+
