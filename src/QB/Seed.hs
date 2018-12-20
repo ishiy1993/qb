@@ -15,6 +15,7 @@ data Seed = Seed
   , withFilter :: Bool
   , params :: Maybe String
   , initialCondition :: Maybe String
+  , eom :: Maybe String
   } deriving (Show,Eq)
 
 instance FromJSON Seed where
@@ -27,6 +28,7 @@ instance FromJSON Seed where
          <*> v .: "with-filter"
          <*> v .:? "params"
          <*> v .:? "initial-condition"
+         <*> v .:? "eom"
   parseJSON _ = fail "Expected Object for Seed value"
 
 getSeed :: FilePath -> IO Seed

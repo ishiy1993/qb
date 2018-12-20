@@ -69,7 +69,7 @@ withSL4TH3 s = CodeStructure { target = S.scheme s
             [ qs =@ "q" ]
             ++ [ (map (++"_"++d) qs) =@ ("d_"++ d ++ " q") | d0 <- delIdx, let d = concat d0 ] ++
             [ "#EOM"
-            , ""
+            , fromMaybe "" (S.eom s)
             , "q_t" @= map (++"_t") qs
             , "q_tt" @= map (++"_tt") qs
             ]
