@@ -8,4 +8,4 @@ generateCode :: Seed -> Code
 generateCode = format . generateCodeStructure
 
 writeCode :: FilePath -> Code -> IO ()
-writeCode fn code = putStrLn code
+writeCode = writeFile

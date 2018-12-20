@@ -11,7 +11,7 @@ main = do
   args <- getArgs
   case args of
     [fn] -> do
-      let output = "tmp.fmr"
       seed <- getSeed fn
+      let output = (scheme seed) ++ ".fmr"
       writeCode output . generateCode $ seed
     _ -> die "Need a yaml file"
