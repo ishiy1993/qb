@@ -1,60 +1,63 @@
+{-# LANGUAGE OverloadedStrings #-}
 module QB.Types where
 
-import Data.List (intercalate)
+import qualified Data.ByteString.Builder as B
 
 type FmrType = String
 
-type Code = String
+type Code = B.Builder
 
 data CodeStructure = CodeStructure
   { target :: String
-  , axes :: [String]
-  , gridStruct :: [String]
-  , elemType :: FmrType
-  , defs :: [String]
-  , initBody :: [String]
-  , firstStepBody :: Maybe [String]
-  , filterBody :: Maybe [String]
-  , stepBody :: [String]
+  , axes :: [B.Builder]
+  , gridStruct :: [B.Builder]
+  , elemType :: B.Builder
+  , defs :: [B.Builder]
+  , initBody :: [B.Builder]
+  , firstStepBody :: Maybe [B.Builder]
+  , filterBody :: Maybe [B.Builder]
+  , stepBody :: [B.Builder]
   }
 
 format :: CodeStructure -> Code
-format code = unlines [ "dimension :: " ++ (show . length $ axes code)
-                    , "axes :: " ++ (intercalate "," $ axes code)
-                    , ""
-                    , unlines $ defs code
-                    , ""
-                    , defFun "init" "()" (paren gs) ([elemType code ++ "[] :: " ++ (intercalate "," [q <=> "0" | q <- gs])] ++ initBody code)
-                    , defFun' "first_step" (paren gs) (paren gs') (firstStepBody code)
-                    , defFun' "filter" (paren gs) (paren gs') (filterBody code)
-                    , defFun "step" (paren gs) (paren gs') (stepBody code)
-                    ]
+format code = mconcat [ "dimension :: " <> (B.intDec . length $ axes code) <> B.charUtf8 '\n'
+                      , "axes :: " <> (sepWith "," $ axes code) <> B.charUtf8 '\n'
+                      , "" <> B.charUtf8 '\n'
+                      , (sepWith "\n" $ defs code) <> B.charUtf8 '\n'
+                      , "" <> B.charUtf8 '\n'
+                      , defFun "init" "()" (paren gs) ([elemType code <> "[] :: " <> (sepWith "," [q <=> "0" | q <- gs])] <> initBody code) <> B.charUtf8 '\n'
+                      , defFun' "first_step" (paren gs) (paren gs') (firstStepBody code) <> B.charUtf8 '\n'
+                      , defFun' "filter" (paren gs) (paren gs') (filterBody code) <> B.charUtf8 '\n'
+                      , defFun "step" (paren gs) (paren gs') (stepBody code) <> B.charUtf8 '\n'
+                      ]
   where
     gs = gridStruct code
-    gs' = map (++"'") $ gridStruct code
+    gs' = map (<>"'") $ gridStruct code
 
-paren :: [String] -> String
-paren xs = "("  ++ intercalate "," xs ++ ")"
+sepWith :: B.Builder -> [B.Builder] -> B.Builder
+sepWith _ [] = mempty
+sepWith s (x:xs) = x <> mconcat [s <> y | y <- xs]
 
-bckt :: [String] -> String
-bckt xs = "["  ++ intercalate "," xs ++ "]"
+paren :: [B.Builder] -> B.Builder
+paren xs = "("  <> sepWith "," xs <> ")"
 
-defFun :: String -> String -> String -> [String] -> String
-defFun fn args res body =
-  unlines $ [ "begin function " ++ res <=> fn ++ args ]
-            ++ body ++
-            [ "end function" ]
+bckt :: [B.Builder] -> B.Builder
+bckt xs = "["  <> sepWith "," xs <> "]"
 
-defFun' :: String -> String -> String -> Maybe [String] -> String
+defFun :: B.Builder -> B.Builder -> B.Builder -> [B.Builder] -> B.Builder
+defFun fn args res body = ("begin function " <> res <=> fn <> args) <> "\n"
+                          <> sepWith "\n" body <> "\n" <>
+                          "end function"
+
+defFun' :: B.Builder -> B.Builder -> B.Builder -> Maybe [B.Builder] -> B.Builder
 defFun' fn args res mbody = maybe "" (defFun fn args res) mbody
 
+(<=>) :: B.Builder -> B.Builder -> B.Builder
+x <=> y = x <> " = " <> y
 
-(<=>) :: String -> String -> String
-x <=> y = x ++ " = " ++ y
-
-(@=) :: String -> [String] -> String
+(@=) :: B.Builder -> [B.Builder] -> B.Builder
 q @= xs = q <=> paren xs
 
-(=@) :: [String] -> String -> String
+(=@) :: [B.Builder] -> B.Builder -> B.Builder
 qs =@ x = paren qs <=> x
 

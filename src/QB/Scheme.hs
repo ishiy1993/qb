@@ -1,5 +1,6 @@
 module QB.Scheme where
 
+import qualified Data.ByteString.Builder as B
 import Data.Maybe (fromMaybe)
 
 import QB.Types
@@ -13,10 +14,10 @@ generateCodeStructure s | S.scheme s == "sl4th3" = withSL4TH3 s
 
 withDefault :: Seed -> CodeStructure
 withDefault s = CodeStructure { target = S.scheme s
-                              , axes = S.axes s
-                              , gridStruct = S.bases s
-                              , elemType = S.elemType s
-                              , defs = ["#PARAMS",fromMaybe "" (S.params s),"#INIT",fromMaybe "" (S.initialCondition s)]
+                              , axes = map B.stringUtf8 $ S.axes s
+                              , gridStruct = map B.stringUtf8 $ S.bases s
+                              , elemType = B.stringUtf8 $ S.elemType s
+                              , defs = map B.stringUtf8 ["#PARAMS",fromMaybe "" (S.params s),"#INIT",fromMaybe "" (S.initialCondition s)]
                               , initBody = []
                               , firstStepBody = Nothing
                               , filterBody = if S.withFilter s then Just [] else Nothing
