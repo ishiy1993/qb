@@ -5,6 +5,7 @@ import Control.Monad.Combinators.Expr
 import Control.Monad.Reader
 import Data.Void
 import qualified Data.Map.Strict as M
+import qualified Data.Scientific as S
 import Text.Megaparsec
 import Text.Megaparsec.Char
 import qualified Text.Megaparsec.Char.Lexer as L
@@ -34,7 +35,7 @@ parens :: Parser a -> Parser a
 parens = between (symbol "(") (symbol ")")
 
 imm :: Parser Double
-imm = lexeme L.float
+imm = lexeme (S.toRealFloat <$> L.scientific)
 
 identifier :: Parser Ident
 identifier = lexeme p
