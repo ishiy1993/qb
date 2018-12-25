@@ -42,7 +42,7 @@ identifier = lexeme p
 
 eqsParser :: Parser Equations
 eqsParser = between sc eof eqs
-  where eqs = sepBy1 eqParser newline
+  where eqs = sepEndBy eqParser sc
 
 eqParser :: Parser Equation
 eqParser = do
