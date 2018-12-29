@@ -83,3 +83,26 @@ coordsParser = do
   axes <- reader cfgAxes
   let coord = choice [string i *> pure c | (i,c) <- zip axes [I0 .. I3]] 
   build <$> (char '_' *> some coord)
+
+
+-- Sample
+euler1 :: Equations
+euler1 = case parseWith ["t","x"] ["r","u","p"] eqsParser "" eom of
+           Right eqs -> eqs
+           Left _ -> error "Error in euler1"
+  where
+    eom = unlines [ "r_t = -(u*r_x + r*u_x)"
+                  , "u_t = -u*u_x - p_x/r"
+                  , "p_t = -u*p_x - gm*p*u_x"
+                  ]
+
+euler2 :: Equations
+euler2 = case parseWith ["t","x","y"] ["r","u","v","p"] eqsParser "" eom of
+           Right eqs -> eqs
+           Left _ -> error "Error in euler2"
+  where
+    eom = unlines [ "r_t = -u*r_x - v*r_y - r*(u_x + v_y)"
+                  , "u_t = -u*u_x - v*u_y - p_x/r"
+                  , "v_t = -u*v_x - v*v_y - p_y/r"
+                  , "p_t = -u*p_x - v*p_y - gm*p*(u_x + v_y)"
+                  ]
