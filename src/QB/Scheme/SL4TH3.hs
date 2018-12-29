@@ -5,6 +5,7 @@ import qualified Data.ByteString.Builder as B
 import Data.List (nub, sort, group, findIndex)
 import Data.Maybe (fromJust, fromMaybe)
 
+import QB.Pretty
 import QB.Types
 import QB.Seed (Seed)
 import qualified QB.Seed as S

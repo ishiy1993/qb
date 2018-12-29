@@ -2,6 +2,7 @@
 module QB.Types where
 
 import qualified Data.ByteString.Builder as B
+import QB.Pretty
 
 type FmrType = String
 
@@ -34,16 +35,6 @@ format code = mconcat [ "dimension :: " <> (B.intDec . length $ axes code) <> B.
     gs = gridStruct code
     gs' = map (<>"'") $ gridStruct code
 
-sepWith :: B.Builder -> [B.Builder] -> B.Builder
-sepWith _ [] = mempty
-sepWith s (x:xs) = x <> mconcat [s <> y | y <- xs]
-
-paren :: [B.Builder] -> B.Builder
-paren xs = "("  <> sepWith "," xs <> ")"
-
-bckt :: [B.Builder] -> B.Builder
-bckt xs = "["  <> sepWith "," xs <> "]"
-
 defFun :: B.Builder -> B.Builder -> B.Builder -> [B.Builder] -> B.Builder
 defFun fn args res body = ("begin function " <> res <=> fn <> args) <> "\n"
                           <> sepWith "\n" body <> "\n" <>
@@ -51,9 +42,6 @@ defFun fn args res body = ("begin function " <> res <=> fn <> args) <> "\n"
 
 defFun' :: B.Builder -> B.Builder -> B.Builder -> Maybe [B.Builder] -> B.Builder
 defFun' fn args res mbody = maybe "" (defFun fn args res) mbody
-
-(<=>) :: B.Builder -> B.Builder -> B.Builder
-x <=> y = x <> " = " <> y
 
 (@=) :: B.Builder -> [B.Builder] -> B.Builder
 q @= xs = q <=> paren xs
