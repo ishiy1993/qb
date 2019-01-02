@@ -120,7 +120,7 @@ instance Diff Exp where
   diff i (Sub e1 e2) = Sub (diff i e1) (diff i e2)
   diff i (Mul e1 e2) = Add (Mul (diff i e1) e2) (Mul e1 (diff i e2))
   diff i (Div e1 e2) = Sub (Div (diff i e1) e2)
-                           (Div (Mul e1 (diff i e2)) (Pow e2 (Imm 2)))
+                           (Div (Mul e1 (diff i e2)) (Mul e2 e2))
   diff i (Pow e1 e2) | isConstant e2 = Mul e2 (Mul (diff i e1) (Pow e1 (Sub e2 (Imm 1))))
                      | otherwise = error "Invalid exp"
 
